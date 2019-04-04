@@ -46,10 +46,12 @@ public class RegisterPresenter implements RegisterContract.Presenter {
                             if (response.body().getResult() == 1){
                                 view.showRegisterSuccess(response.body().getMessage());
                             }else {
+                                view.hideProgress();
                                 view.showError(response.body().getMessage());
                             }
                         }else {
                             view.showError("Data Kosong");
+                            view.hideProgress();
                         }
                     }
 
@@ -63,6 +65,7 @@ public class RegisterPresenter implements RegisterContract.Presenter {
 
             }else {
                 view.showError("Tidak boleh ada yang kosong");
+                view.hideProgress();
             }
         }
 

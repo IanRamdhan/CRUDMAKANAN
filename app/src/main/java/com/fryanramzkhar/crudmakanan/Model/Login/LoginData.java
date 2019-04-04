@@ -31,13 +31,6 @@ public class LoginData implements Parcelable {
     @SerializedName("jenkel")
     private String jenkel;
 
-    public String getJenkel() {
-        return jenkel;
-    }
-
-    public void setJenkel(String jenkel) {
-        this.jenkel = jenkel;
-    }
 
     public String getId_user() {
         return id_user;
@@ -95,6 +88,14 @@ public class LoginData implements Parcelable {
         this.level = level;
     }
 
+    public String getJenkel() {
+        return jenkel;
+    }
+
+    public void setJenkel(String jenkel) {
+        this.jenkel = jenkel;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -109,10 +110,10 @@ public class LoginData implements Parcelable {
         dest.writeString(this.username);
         dest.writeString(this.password);
         dest.writeString(this.level);
+        dest.writeString(this.jenkel);
     }
 
     public LoginData() {
-
     }
 
     protected LoginData(Parcel in) {
@@ -123,6 +124,7 @@ public class LoginData implements Parcelable {
         this.username = in.readString();
         this.password = in.readString();
         this.level = in.readString();
+        this.jenkel = in.readString();
     }
 
     public static final Parcelable.Creator<LoginData> CREATOR = new Parcelable.Creator<LoginData>() {

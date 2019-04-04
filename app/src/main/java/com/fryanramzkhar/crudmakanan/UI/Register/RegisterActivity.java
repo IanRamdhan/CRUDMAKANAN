@@ -105,10 +105,10 @@ public class RegisterActivity extends AppCompatActivity implements RegisterContr
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.radioLaki:
-                jenkel = "Laki-Laki";
+                jenkel = "L";
                 break;
             case R.id.radioPerempuan:
-                jenkel = "Perempuan";
+                jenkel = "P";
                 break;
             case R.id.radioAdmin:
                 level = "1";

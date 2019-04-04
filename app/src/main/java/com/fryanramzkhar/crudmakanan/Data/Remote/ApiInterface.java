@@ -1,11 +1,20 @@
 package com.fryanramzkhar.crudmakanan.Data.Remote;
 
+import com.fryanramzkhar.crudmakanan.Model.DetailMakanan.DetailMakananResponse;
 import com.fryanramzkhar.crudmakanan.Model.Login.LoginResponse;
+import com.fryanramzkhar.crudmakanan.Model.Makanan.MakananResponse;
+import com.fryanramzkhar.crudmakanan.Model.UploadMakanan.UploadMakananResponse;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
+import retrofit2.http.Query;
 
 public interface ApiInterface {
 
@@ -29,4 +38,60 @@ public interface ApiInterface {
             @Field("notelp") String notelp,
             @Field("level") String level
     );
-}
+
+    @FormUrlEncoded
+    @POST("updateuser.php")
+    Call<LoginResponse> updateUser(
+            @Field("iduser") int iduser,
+            @Field("namauser") String namauser,
+            @Field("alamat") String alamat,
+            @Field("jenkel") String jenkel,
+            @Field("notelp") String notelp
+    );
+
+
+    //Mengambil data kategori
+    @GET("getkategori.php")
+    Call<MakananResponse> getKategoriMakanan();
+
+    //Mengambil data makanan baru
+    @GET("getmakananbaru.php")
+    Call<MakananResponse> getMakananBaru();
+
+    //Mengambil data makanan populer
+    @GET("getmakananpopuler.php")
+    Call<MakananResponse> getMakananPopuler();
+
+    //MengUpload Makanan Baru
+    @Multipart
+    @POST("uploadmakanan.php")
+    Call<UploadMakananResponse> uploadMakanan(
+            @Part("iduser") int iduser,
+            @Part("idkategori") int idkategori,
+            @Part("namamakanan")RequestBody namamakanan,
+            @Part("descmakanan")RequestBody descmakanan,
+            @Part("inserttime") RequestBody inserttime,
+            @Part MultipartBody.Part image
+            );
+
+    //Mengambil Data Detail Makanan
+    @GET("getdetailmakanan.php")
+    Call<DetailMakananResponse> getDetailMakanan(@Query("idmakanan") int idMakanan);
+
+    //Mengambil data makanan berdasarkan kategori
+    @GET("getmakananbykategori.php")
+    Call<MakananResponse> getMakananCategory(@Query("idkategori") int idKategori);
+
+    // Mengambil data makanan berdasarkan id user
+    @GET("getmakananbyuser.php")
+    Call<MakananResponse> getMakananByUser(@Query("id_user") int idUser);
+
+    @FormUrlEncoded
+    @POST("deletemakanan.php")
+    Call<MakananResponse> deleteMakanan(
+        @Field("idmakanan") int idMakanan,
+                @Field("fotomakanan") String namaFotoMakanan);
+    }
+
+    
+
