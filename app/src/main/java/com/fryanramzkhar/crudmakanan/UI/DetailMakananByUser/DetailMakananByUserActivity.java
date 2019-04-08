@@ -1,15 +1,20 @@
 package com.fryanramzkhar.crudmakanan.UI.DetailMakananByUser;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,6 +30,7 @@ import com.fryanramzkhar.crudmakanan.Model.Makanan.MakananData;
 import com.fryanramzkhar.crudmakanan.R;
 import com.fryanramzkhar.crudmakanan.Utils.Constant;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +61,7 @@ public class DetailMakananByUserActivity extends AppCompatActivity implements De
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout swipeRefresh;
     private String namaFotoMakanan;
+    private String[] mIdCategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +74,6 @@ public class DetailMakananByUserActivity extends AppCompatActivity implements De
 
         //Menangkap id makanan yang dikirimkan dari activity sebelumnya
         idMakanan = getIntent().getStringExtra(Constant.KEY_EXTRA_ID_MAKANAN);
-
-        //Mengambil data detail makanan
-        detailMakananByUserPresenter.getDetailMakanan(idMakanan);
 
         //Menagmbil data Category untuk ditampilkan di spinner
         detailMakananByUserPresenter.getCategory();
@@ -141,7 +145,20 @@ public class DetailMakananByUserActivity extends AppCompatActivity implements De
         edtDesc.setText(makananData.getDescMakanan());
 
         //memilih spinner sesuai dengan category makananyang ada di dalam database
-        spinCategory.setSelection(Integer.valueOf(idCategory));
+        for (int i = 0 ;i < mIdCategory.length; i++){
+
+            Log.i("cek", "isi loop mIdCategory: " + mIdCategory[i]);
+
+            if (Integer.valueOf(mIdCategory[i]).equals(Integer.valueOf(idCategory))){
+                spinCategory.setSelection(i);
+
+                Log.i("cek", "isi select mIdCategory: " + mIdCategory[i]);
+                Log.i("cek", "isi select idCategory: " + idCategory);
+
+            }
+        }
+
+
 
         RequestOptions options = new RequestOptions().error(R.drawable.ic_broken_image).placeholder(R.drawable.ic_broken_image);
         Glide.with(this).load(makananData.getUrlMakanan()).apply(options).into(imgPicture);
@@ -159,20 +176,37 @@ public class DetailMakananByUserActivity extends AppCompatActivity implements De
     }
 
     @Override
+    public void successUpdate() {
+        detailMakananByUserPresenter.getCategory();
+    }
+
+    @Override
     public void showSpinnerCategory(final List<MakananData> categoryDataList) {
         //Membuat data penampung untuk Spinner
         List<String> listSpinner = new ArrayList<>();
+
+        String [] namaCategory = new String[categoryDataList.size()];
+        mIdCategory = new String[categoryDataList.size()];
+
+
         listSpinner.clear();
         for (int i = 0; i < categoryDataList.size(); i++){
-            listSpinner.add(categoryDataList.get(i).getNamaKategori());
+
+            namaCategory[i] = categoryDataList.get(i).getNamaKategori();
+            mIdCategory[i] = categoryDataList.get(i).getIdKategori();
+
+            Log.i("cek", "isi show namaCategory: " + namaCategory[i]);
+            Log.i("cek", "isi show mIDCategory: " + mIdCategory[i]);
+
         }
 
         //Membuat Adapter Spinner
-        ArrayAdapter<String> categorySpinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, listSpinner);
+        ArrayAdapter<String> categorySpinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, namaCategory);
         //Setting untuk menampilkan spinner dengan 1 line
         categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         //Memasukkan Adapter ke Spinner
         spinCategory.setAdapter(categorySpinnerAdapter);
+
 
         spinCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -186,6 +220,8 @@ public class DetailMakananByUserActivity extends AppCompatActivity implements De
 
             }
         });
+        //Mengambil data detail makanan
+        detailMakananByUserPresenter.getDetailMakanan(idMakanan);
 
     }
 
@@ -193,12 +229,45 @@ public class DetailMakananByUserActivity extends AppCompatActivity implements De
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.fab_choose_picture:
+                //Mengambil gambar dari storage
+                ShowFileChooser();
                 break;
             case R.id.btn_update:
+                detailMakananByUserPresenter.updateDataMakanan(this, filePath, edtName.getText().toString(), edtDesc.getText().toString(), idCategory, namaFotoMakanan, idMakanan);
                 break;
             case R.id.btn_delete:
                 detailMakananByUserPresenter.deleteMakanan(idMakanan, namaFotoMakanan);
                 break;
         }
     }
+
+    private void ShowFileChooser() {
+        //Membuat Objek Intent
+        Intent intentGallery = new Intent(Intent.ACTION_PICK);
+        intentGallery.setType("image/*");
+        intentGallery.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intentGallery, "Select Picture"), Constant.REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constant.REQUEST_CODE && resultCode == RESULT_OK && data != null && data.getData() != null){
+
+            //mengambil data foto dan memasukkan ke dalam variable filePath
+            filePath = data.getData();
+            try{
+                //Mengambil data gambar lalu di convert ke Bitmap
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                    //Tampilkan gambar yang baru dipilih lewat layar
+                    imgPicture.setImageBitmap(bitmap);
+
+
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+
+        }
+    }
+
 }

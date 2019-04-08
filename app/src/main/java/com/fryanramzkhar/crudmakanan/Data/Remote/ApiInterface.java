@@ -91,6 +91,19 @@ public interface ApiInterface {
     Call<MakananResponse> deleteMakanan(
         @Field("idmakanan") int idMakanan,
                 @Field("fotomakanan") String namaFotoMakanan);
+
+    //Update Makanan
+    @Multipart
+    @POST("updatemakanan.php")
+    Call<MakananResponse> updateMakanan(
+            @Part("idmakanan") int idMakanan,
+            @Part("idkategori") int idCategory,
+            @Part("namamakanan") RequestBody namaMakanan,
+            @Part("descmakanan") RequestBody descMakanan,
+            @Part("fotomakanan") RequestBody namaFotoMakanan,
+            @Part("inserttime") RequestBody insertTime,
+            @Part MultipartBody.Part image
+    );
     }
 
     

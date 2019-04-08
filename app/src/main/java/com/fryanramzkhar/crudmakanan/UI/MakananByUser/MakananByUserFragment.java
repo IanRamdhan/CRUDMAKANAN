@@ -114,4 +114,10 @@ public class MakananByUserFragment extends Fragment implements MakananByUserCont
         super.onDestroyView();
         unbinder.unbind();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        makananByUserPresenter.getListFoodByUser(idUser);
+    }
 }

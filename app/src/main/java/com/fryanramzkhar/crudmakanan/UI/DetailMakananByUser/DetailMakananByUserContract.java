@@ -15,13 +15,14 @@ public interface DetailMakananByUserContract {
         void showDetailMakanan(MakananData foodByUserList);
         void showMessage(String msg);
         void successDelete();
+        void successUpdate();
         void showSpinnerCategory(List<MakananData> categoryDataList);
     }
 
     interface Presenter{
         void getCategory();
         void getDetailMakanan(String idMakanan);
-        void updateDataMakanan(Context context, Uri filePath, String namaMakanan, String descMakanan, String idCategory, String namaFotoMakanan);
+        void updateDataMakanan(Context context, Uri filePath, String namaMakanan, String descMakanan, String idCategory, String namaFotoMakanan, String idMakanan);
         void deleteMakanan(String idMakanan, String namaFotoMakanan);
     }
 }
