@@ -1,7 +1,8 @@
 package com.fryanramzkhar.crudmakanan.Utils;
 
 public class Constant {
-    public static final String BASE_URL = "http://192.168.70.77/makanan/";
+    //Besa URl Link untuk alamat API
+    public static final String BASE_URL = "http://localhost/makanan/";
     public static final String KEY_LOGIN = "KEY_LOGIN";
     public static final String KEY_IS_LOGIN = "KEY_IS_LOGIN";
     public static final String KEY_USER_ID = "KEY_USER_ID";

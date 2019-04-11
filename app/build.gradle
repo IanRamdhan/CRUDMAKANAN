@@ -55,4 +55,6 @@ dependencies {
     //Circle Image
     implementation 'de.hdodenhof:circleimageview:3.0.0'
 
+    //Logging Interceptor
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
 }

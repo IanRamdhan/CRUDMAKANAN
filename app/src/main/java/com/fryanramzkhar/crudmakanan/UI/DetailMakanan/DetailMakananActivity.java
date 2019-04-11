@@ -88,11 +88,12 @@ public class DetailMakananActivity extends AppCompatActivity implements DetailMa
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         switch (item.getItemId()){
-            case android.R.id.home: {
+            case android.R.id.home:
                 finish();
                 overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-            }
+
         }
         return super.onOptionsItemSelected(item);
     }
